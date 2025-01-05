@@ -73,7 +73,7 @@ const initializeVMFork = async () => {
     // Deploy the MockRiskyDiceGameExploit contract
     const MockRiskyDiceGameExploit = new ethers.ContractFactory(MOCKRISKYDICEGAMEEXPLOIT_ABI, MOCKRISKYDICEGAMEEXPLOIT_BYTECODE, localAccount);
     const MockRiskyDiceGameExploitContract = await MockRiskyDiceGameExploit.deploy(
-        { value: ethers.parseEther("10") } // Send 10 ETH with deployment (sent to MockRiskyDiceGame contract when deployed via the exploit contract
+        { value: ethers.parseEther("10") } // Send 10 ETH with deployment (sent to MockRiskyDiceGame contract when deployed via the exploit contract)
     );
     const MockRiskyDiceGameExploitAddress = MockRiskyDiceGameExploitContract.target;
     await network.provider.send("evm_mine");
@@ -95,7 +95,7 @@ const executeSimulatedExploit = async () => {
     await initializeVMFork();
     const { localAccount, MockRiskyDiceGameExploitContract } = LOCAL_FORK;
 
-    // Get the address of the MockRiskyDiceGame contract from the exploit contract using the MockRiskyDiceGameContract() function
+    // Get the address of the MockRiskyDiceGame contract from the exploit contract using the MockRiskyDiceGameAddress() function
     const MockRiskyDiceGameAddress = await MockRiskyDiceGameExploitContract.MockRiskyDiceGameAddress();
     // Create a new MockRiskyDiceGame contract instance
     const MockRiskyDiceGameContract = new ethers.Contract(MockRiskyDiceGameAddress, MOCKRISKYDICEGAME_ABI, localAccount);
@@ -110,8 +110,8 @@ const executeSimulatedExploit = async () => {
     console.log("State snapshot taken, ID:", snapshotId);
 
     // Call the testDeterministicHashResult function on the MockRiskyDiceGameExploit contract
-    // This function updates the storedHashInputs variable (struct) with the hash of the msg.sender,
-    // anticipated block timestamp, txOrigin, txGasPrice, and blockHash if it satisfies the win condition
+    // This function updates the storedHashInputs variable (struct) with the hash (converted to uint256) 
+    // of the msg.sender, anticipated block timestamp, txOrigin, txGasPrice, and blockHash if it satisfies the win condition
     
     // Since this function call is a transaction, we must wait for it to be mined
     const testDeterministicHashesTx = await MockRiskyDiceGameExploitContract.testDeterministicHashResult();
@@ -275,5 +275,3 @@ executeSimulatedExploit().catch(error => {
     console.error(error);
     process.exit(1);
 });
-
-// Find result with gas price > tx cost (Solidity single tx) and bump gas price to match winning value to end transaction
