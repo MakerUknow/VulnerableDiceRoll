@@ -1,13 +1,13 @@
 ## License
 MIT License
 
-# Risky Dice Game Exploit
+# Solidity Dice Game Exploit
 
 A demonstration of exploiting a vulnerable dice game smart contract by manipulating transaction parameters to predict and control winning outcomes.
 
 ## Overview
 
-This project demonstrates how to exploit a vulnerable dice game contract (`MockRiskyDiceGame`) by predicting and controlling the inputs used in its random number generation. The exploit takes advantage of deterministic block parameters and transaction properties that can be manipulated or predicted.
+This project demonstrates how to exploit a vulnerable dice game contract (`MockSolidityDiceGame`) by predicting and controlling the inputs used in its random number generation. The exploit takes advantage of deterministic block parameters and transaction properties that can be manipulated or predicted.
 
 ### Key Vulnerabilities
 - Using block parameters (`block.timestamp`, `blockhash`) for randomness
@@ -18,8 +18,8 @@ This project demonstrates how to exploit a vulnerable dice game contract (`MockR
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/risky-dice-game-exploit.git
-cd risky-dice-game-exploit
+git clone https://github.com/yourusername/solidity-dice-game-exploit.git
+cd solidity-dice-game-exploit
 ```
 
 2. Install dependencies:
@@ -44,8 +44,8 @@ npx hardhat run ./scripts/VulnerableDiceRoll.js
 
 ### 1. Initial Setup
 - Creates a local fork of the Ethereum network using Hardhat
-- Deploys the exploit contract (`MockRiskyDiceGameExploit`) sending 10 ETH to the constructor
-- Deploys the target contract (`MockRiskyDiceGame`) with 10 ETH balance via the exploit contract constructor
+- Deploys the exploit contract (`MockSolidityDiceGameExploit`) sending 10 ETH to the constructor
+- Deploys the target contract (`MockSolidityDiceGame`) with 10 ETH balance via the exploit contract constructor
 
 ### 2. Finding Winning Parameters
 The exploit contract's `testDeterministicHashResult()` function:

