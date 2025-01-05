@@ -1,0 +1,76 @@
+{
+  "contractName": "MockRiskyDiceGame",
+  "compilerVersion": "v0.8.28+commit.7893614a",
+  "contractSource": "contracts/MockRiskyDiceGame/MockRiskyDiceGame.sol",
+  "compilerInput": {
+    "language": "Solidity",
+    "sources": {
+      "MockRiskyDiceGame.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity 0.8.28;\r\n\r\ncontract MockRiskyDiceGame {\r\n\r\n    constructor() payable {}\r\n\r\n    function getEthBalance() external view returns (uint) {\r\n        return address(this).balance;\r\n    }\r\n\r\n    function generateRandomNumber() internal view returns (uint256) {\r\n        return uint256(\r\n            keccak256(abi.encode(msg.sender, tx.origin, block.timestamp, tx.gasprice, blockhash(block.number - 1)))\r\n        );\r\n    }\r\n\r\n    function rollDice() external payable {\r\n        require(msg.value == 1 ether);\r\n\r\n        if (generateRandomNumber() % 6 == 5) {\r\n            payable(msg.sender).call{value: 2 ether}(\"\");\r\n        }\r\n    }\r\n\r\n    receive() external payable {}\r\n}"
+      }
+    },
+    "settings": {
+      "outputSelection": {
+        "MockRiskyDiceGame.sol": {
+          "MockRiskyDiceGame": [
+            "abi",
+            "evm.bytecode.object",
+            "evm.deployedBytecode.object",
+            "evm.deployedBytecode.immutableReferences"
+          ],
+          "": [
+            "ast"
+          ]
+        },
+        "*": {
+          "*": [
+            "storageLayout"
+          ]
+        }
+      },
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      }
+    }
+  },
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "payable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "getEthBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "rollDice",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ],
+  "constructorArgs": [],
+  "bytecode": "60806040526101b9806100115f395ff3fe60806040526004361061002b575f3560e01c806370ed0ada14610036578063837e7cc614610055575f5ffd5b3661003257005b5f5ffd5b348015610041575f5ffd5b504760405190815260200160405180910390f35b61005d61005f565b005b34670de0b6b3a764000014610072575f5ffd5b600661007c6100dd565b610086919061013f565b6005036100db576040513390671bc16d674ec80000905f81818185875af1925050503d805f81146100d2576040519150601f19603f3d011682016040523d82523d5f602084013e6100d7565b606091505b5050505b565b5f3332423a6100ed60014361015e565b604080516001600160a01b0396871660208201529590941693850193909352606084019190915260808301524060a082015260c001604051602081830303815290604052805190602001205f1c905090565b5f8261015957634e487b7160e01b5f52601260045260245ffd5b500690565b8181038181111561017d57634e487b7160e01b5f52601160045260245ffd5b9291505056fea2646970667358221220799814ce5bb8ed612b1f4f3a5ec73b4f92874c2246f847bd4ee80f47b793b55a64736f6c634300081c0033",
+  "deployedBytecode": "60806040526004361061002b575f3560e01c806370ed0ada14610036578063837e7cc614610055575f5ffd5b3661003257005b5f5ffd5b348015610041575f5ffd5b504760405190815260200160405180910390f35b61005d61005f565b005b34670de0b6b3a764000014610072575f5ffd5b600661007c6100dd565b610086919061013f565b6005036100db576040513390671bc16d674ec80000905f81818185875af1925050503d805f81146100d2576040519150601f19603f3d011682016040523d82523d5f602084013e6100d7565b606091505b5050505b565b5f3332423a6100ed60014361015e565b604080516001600160a01b0396871660208201529590941693850193909352606084019190915260808301524060a082015260c001604051602081830303815290604052805190602001205f1c905090565b5f8261015957634e487b7160e01b5f52601260045260245ffd5b500690565b8181038181111561017d57634e487b7160e01b5f52601160045260245ffd5b9291505056fea2646970667358221220799814ce5bb8ed612b1f4f3a5ec73b4f92874c2246f847bd4ee80f47b793b55a64736f6c634300081c0033",
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  },
+  "immutableReferences": {}
+}
