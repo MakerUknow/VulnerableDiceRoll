@@ -1,9 +1,10 @@
-## License
-MIT License
-
 # Solidity Dice Game Exploit
 
 A demonstration of exploiting a vulnerable dice game smart contract by manipulating transaction parameters to predict and control winning outcomes.
+
+## License
+
+MIT License
 
 ## Overview
 
@@ -63,7 +64,7 @@ The exploit contract's `testDeterministicHashResult()` function:
 - Stores winning parameters when found
 
 ### 3. Executing the Exploit
-The script then:
+The backend JavaScript ethers.js script then:
 1. Creates multiple transactions with the winning parameters
 2. Submits them to the mempool (simulated)
 3. Forces the block timestamp to match predicted value
@@ -97,4 +98,3 @@ This exploit demonstrates the potential for manipulating block parameters to con
 
 ## Acknowledgments
 This project was created as a learning exercise and is not intended for real-world use. It is provided for educational purposes only.
--------
