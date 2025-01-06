@@ -15,9 +15,8 @@ const path = require("path");
  */
 
 const FUND_AMOUNT = ethers.parseEther("100");
-
-const PROVIDER = new ethers.JsonRpcProvider("https://ethereum.publicnode.com");
 const JSON_RPC_URL = "https://ethereum.publicnode.com";
+const PROVIDER = new ethers.JsonRpcProvider(JSON_RPC_URL);
 
 const MOCKSOLIDITYDICEGAME_COMPILATION_PATH = require(path.join(
   process.cwd(),
