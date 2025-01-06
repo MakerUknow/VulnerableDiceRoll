@@ -18,7 +18,11 @@ This project demonstrates how to exploit a vulnerable dice game contract (`MockS
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/solidity-dice-game-exploit.git
+git clone https://github.com/MakerUknow/solidity-dice-game-exploit.git
+```
+
+2. Navigate to the project directory:
+```bash
 cd solidity-dice-game-exploit
 ```
 
@@ -83,7 +87,14 @@ In a real-world scenario, this exploit could be executed by:
 ## Security Considerations
 
 To prevent such exploits:
-- Never use block parameters for randomness
+- Never use block parameters with predictable values for randomness
 - Implement proper random number generation (e.g., Chainlink VRF)
 - Avoid reliance on transaction properties for game mechanics
 - Include rate limiting and other protective measures
+
+## Conclusion
+This exploit demonstrates the potential for manipulating block parameters to control the outcome of a Solidity dice game. It highlights the importance of secure random number generation and transaction parameter control in smart contracts.
+
+## Acknowledgments
+This project was created as a learning exercise and is not intended for real-world use. It is provided for educational purposes only.
+-------
